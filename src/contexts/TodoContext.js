@@ -1,37 +1,43 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useReducer, useEffect } from "react";
+import { todoReducer } from "../reducers/TodoReducer";
+import { GET_TODOS, SAVE_TODO } from "../reducers/types";
 //import { v4 as uuidv4 } from 'uuid'
 
 export const TodoContext = createContext()
 
 const TodoContextProvider = ({ children }) => {
     // State
-    const [todos, setTodos] = useState([])
+    //const [todos, setTodos] = useState([])
+
+    const [todos, dispatch] = useReducer(todoReducer, [])
 
     //useEffect
     useEffect(() => {
-        console.log('getting todos')
-        const todos = localStorage.getItem('todos')
-        if (todos) setTodos(JSON.parse(todos))
+        dispatch({
+            type: GET_TODOS,
+            payload: null,
+        })
     }, [])
 
     useEffect(() => {
-        console.log('saving todos')
-        localStorage.setItem('todos', JSON.stringify(todos))
+        dispatch({
+            type: SAVE_TODO,
+            payload: { todos }
+        })
     }, [todos])
 
     // Func
-    const addTodo = todo => {
-        setTodos([...todos, todo])
-    }
+    // const addTodo = todo => {
+    //     setTodos([...todos, todo])
+    // }
 
-    const deleteTodo = id => {
-        setTodos(todos.filter(todo => todo.id !== id))
-    }
+    // const deleteTodo = id => {
+    //     setTodos(todos.filter(todo => todo.id !== id))
+    // }
 
     const todoContextData = {
         todos,
-        addTodo,
-        deleteTodo
+        dispatch
     }
 
     // Return provider
